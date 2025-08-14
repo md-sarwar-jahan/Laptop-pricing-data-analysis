@@ -14,3 +14,63 @@ print(df.dtypes)
 
 print(df.describe(include='all'))
 print(df.info)
+
+
+file_path = 'C:/Users/tareq/Desktop/Data Analysis/laptop_pricing_dataset_mod1.csv'
+df = pd.read_csv(file_path, header=0)
+
+df[['Screen_Size_cm']] = np.round(df[['Screen_Size_cm']], 2)
+
+df.head()
+df.replace('?', np.nan, inplace=True)
+df.drop('Unnamed: 0', axis=1, inplace=True)
+
+missing_data = df.isnull()
+missing_data.head()
+
+for column in missing_data.columns.values.tolist():
+    print(column)
+    print(missing_data[column].value_counts())
+    print('')
+
+avg_weight = df['Weight_kg'].astype('float').mean(axis=0)
+print(avg_weight)
+
+df['Weight_kg'].replace(np.nan, avg_weight, inplace=True)
+
+df['Screen_Size_cm'].value_counts().idxmax()
+df['Screen_Size_cm'].replace(np.nan, 39.624, inplace=True)
+df.head()
+df[['Weight_kg', 'Screen_Size_cm']] = df[['Weight_kg', 'Screen_Size_cm']].astype('float')
+df['Screen_Size_cm'] = df['Screen_Size_cm']/2.54
+
+df.rename(columns={'Screen_Size_cm':'Screen_Size_inch'}, inplace=True)
+
+df['Weight_kg'] = df['Weight_kg']*2.205
+
+df.rename(columns={'Weight_kg':'Weight_pounds'}, inplace=True)
+df.head()
+df[['Weight_pounds', 'CPU_frequency']] = np.round(df[['Weight_pounds', 'CPU_frequency']], 2)
+
+df['CPU_frequency'] = df['CPU_frequency']/df['CPU_frequency'].max()
+
+bins = np.linspace(min(df['Price']), max(df['Price']), 4)
+bins
+group_names = ['Low', 'Medium', 'High']
+
+df['Binned-Price'] = pd.cut(df['Price'], bins, labels=group_names, include_lowest=True)
+
+plt.bar(group_names, df['Binned-Price'].value_counts())
+plt.xlabel("Price")
+plt.ylabel("count")
+plt.title("Price bins")
+
+dummy_variable_1 = pd.get_dummies(df['Screen'])
+dummy_variable_1.head()
+
+dummy_variable_1.rename(columns={'Full HD':'Screen-Full_HD', 'IPS Panel':'Screen-IPS_panel'}, inplace=True)
+df = pd.concat([df, dummy_variable_1], axis=1)
+
+df.drop('Screen', axis=1, inplace=True)
+
+df.head()
