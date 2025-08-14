@@ -1,0 +1,16 @@
+import numpy as np
+import pandas as pd
+
+filepath = 'C:/Users/tareq/Desktop/Data Analysis/laptop_pricing_dataset_base.csv'
+df = pd.read_csv(filepath, header=None)
+df.head()
+
+header = ["Manufacturer", "Category", "Screen", "GPU", "OS", "CPU_core", "Screen_Size_inch", "CPU_frequency", "RAM_GB", "Storage_GB_SSD", "Weight_kg", "Price"]
+df.columns = header
+df.head()
+
+df.replace('?', np.nan, inplace=True)
+print(df.dtypes)
+
+print(df.describe(include='all'))
+print(df.info)
